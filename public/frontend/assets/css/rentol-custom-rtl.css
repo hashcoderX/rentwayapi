@@ -1,0 +1,100 @@
+body {
+  overflow-x: hidden;
+  direction: rtl;
+}
+
+.owl-carousel {
+  direction: ltr;
+}
+
+.owl-carousel .owl-nav,
+.owl-carousel .owl-dots,
+.owl-carousel .owl-item {
+  direction: rtl;
+}
+
+.contact__input-box .bootstrap-select .dropdown-menu,
+.bootstrap-select .dropdown-toggle .filter-option {
+  text-align: right;
+}
+
+.list-unstyled {
+  padding-right: 0;
+}
+
+.main-header__right__info a:first-child {
+  margin-right: 20px;
+}
+
+.how-rent-two__item::before {
+  transform: rotateY(-180deg) translateY(11px);
+}
+.how-rent-two__item::after {
+  transform: rotateY(-180deg) translateY(0px);
+}
+.how-rent-two__item:hover::after {
+  z-index: -2;
+  transform: rotateY(-180deg) translateY(11px);
+}
+.how-rent-two__item:hover::before {
+  z-index: -1;
+  transform: rotateY(-180deg) translateY(0px);
+}
+
+@media (max-width: 1920px) and (min-width: 1600px) {
+  .asked-question__carousel {
+    margin: 0;
+    position: absolute;
+    top: 120px;
+    left: 160px;
+    right: auto;
+    width: calc(42% - 30px);
+  }
+}
+@media (max-width: 1599px) and (min-width: 991px) {
+  .asked-question__carousel {
+    margin: 0;
+    position: absolute;
+    top: 120px;
+    right: auto;
+    left: 0px;
+    width: calc(50% - 15px);
+  }
+}
+.how-rent-two__element-two,
+.how-rent-two__element-one,
+.explore-our-cars__bottom__custome-navs button.owl-next,
+.explore-our-cars__bottom__custome-navs button.owl-prev {
+  transform: rotateY(-180deg) translateY(-50%);
+}
+
+.booking-car-one__form__control .booking-car-one__btn span:last-child,
+.booking-car-one__form__text::after,
+.testimonials-one__custome-navs button,
+.testimonials-card--one::after {
+  transform: rotateY(-180deg);
+}
+
+.booking-car-one__form__control .booking-car-one__btn:hover span:last-child {
+  transform: rotate(227deg);
+}
+
+.fleet-cta__inner__item--two::before {
+  right: -30px;
+  left: auto;
+}
+
+.fleet-cta__inner__item--two::after {
+  right: -30px;
+  left: auto;
+}
+
+.fleet-cta__inner__item--two::after {
+  left: 77px;
+  right: auto;
+}
+
+.cta-two__thumb__item-two {
+  transform: translateY(-50%) rotateY(-180deg);
+}
+/*# sourceMappingURL=rentol-custom-rtl.css.map */
