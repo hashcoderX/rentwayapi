@@ -105,14 +105,16 @@ class PrintlayoutController extends Controller
             $agreement->save();
 
             return redirect()->back()->with('success', 'Image uploaded successfully.');
+
+            return response()->json([
+            'status' => 200,
+            'message' => 'Agreement uploaded successfully.',
+            'data' => $agreement]);
         }else{
             
         }
 
-        // return response()->json([
-        //     'status' => 200,
-        //     'message' => 'Agreement uploaded successfully.',
-        // ]);
+        
     }
 
     function compressImage($source, $destination, $quality)
@@ -151,10 +153,27 @@ class PrintlayoutController extends Controller
     }
 
 
-    function arrangement(Request $request)
+    /**
+     * Display a single agreement page for layout arrangement.
+     *
+     * @param  int  $id  Agreement primary key
+     */
+    function arrangement($id)
     {
-        $documentId = $request->id;
-        $documentFile = Agreement::where('id', $documentId)->first();
+        // Retrieve agreement by id and (optionally) ensure it belongs to the authenticated user's company
+        $query = Agreement::query()->where('id', $id);
+
+        if (Auth::check()) {
+            // If agreements are company-scoped, enforce company match
+            $query->where('companyid', Auth::user()->company_id);
+        }
+
+        $documentFile = $query->first();
+
+        if (!$documentFile) {
+            // Graceful fallback: redirect back with error if missing instead of raw 404 page
+            return redirect()->back()->with('error', 'Agreement page not found or inaccessible.');
+        }
 
         return view('setting.arrangment', compact('documentFile'));
     }

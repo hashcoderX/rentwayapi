@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AddController;
 use App\Http\Controllers\AttendenceController;
-use App\Http\Controllers\Auth\ForgotPasswordController as AuthForgotPasswordController;
+// use App\Http\Controllers\Auth\ForgotPasswordController as AuthForgotPasswordController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BacklisterController;
 use App\Http\Controllers\BookingController;
@@ -14,7 +14,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeHasLeaveController;
 use App\Http\Controllers\ExpensesController;
-use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ForgotPasswordController; // Non-namespaced custom controller (not in Auth\) to avoid Reflection issues for route:list
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\InvoiceController;
@@ -33,9 +33,14 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\GoogleController;
 
 
-Auth::routes(['verify' => true]);  // This automatically adds routes for reset, registration, etc.
+
+// Auth scaffolding routes (verification enabled). Ensure no legacy Auth\ForgotPasswordController references remain.
+// Auth::routes(['verify' => true]);
+// Disabled legacy Auth::routes to avoid referencing non-existent Auth\ForgotPasswordController.
+// Auth routes are provided by routes/auth.php (Breeze/Jetstream-style controllers) and email verification is handled there.
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,12 +52,14 @@ Auth::routes(['verify' => true]);  // This automatically adds routes for reset, 
 |
 */
 
-Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
+
+// Google OAuth for customer (website user) login
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 // Advertiser login 
-Route::get('/auth/googlead', [SocialAuthController::class, 'redirectToGoogle'])->name('google.loginadvertizer');
-Route::get('/auth/google/callbackad', [SocialAuthController::class, 'handleGoogleCallbackAdvertizer']);
+Route::get('/auth/googlead', [GoogleController::class, 'redirectToGoogle'])->name('google.loginadvertizer');
+Route::get('/auth/google/callbackad', [GoogleController::class, 'handleGoogleCallbackAdvertizer']);
 
 
 Route::get('/home', [FrontendController::class, 'mainPage'])->name('mainPage');
@@ -65,7 +72,7 @@ Route::get('/backend', function () {
 });
 
 Route::get('/forgetcustomerpassword', [FrontendController::class, 'forgetCustomerPassword'])->name('forgetCustomerPassword');
-Route::post('password/email', [AuthForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+// Route::post('password/email', [AuthForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
 
 // cat view 
@@ -313,7 +320,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/clientlists', [CustomerController::class, 'myclientlist'])->name('myclientlist');
     Route::get('/getcustomerdetails', [CustomerController::class, 'customerDetails'])->name('customerDetails');
     Route::get('/customer', [CustomerController::class, 'customer'])->name('customer');
-    Route::post('/savecustomer', [CustomerController::class, 'register'])->name('register');
+    Route::post('/savecustomer', [CustomerController::class, 'register'])->name('customer.register');
     Route::post('/registerwebcustomer', [CustomerController::class, 'registerWebsiteCustomers'])->name('registerWebsiteCustomers');
     Route::get('/customer/{id}', [CustomerController::class, 'profile'])->name('profile');
     Route::post('/updatecustomer', [CustomerController::class, 'update'])->name('update');
@@ -388,6 +395,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/uploadagreementsec', [PrintlayoutController::class, 'uploadAgreementpage'])->name('uploadAgreementpage');
 
     Route::get('/setting/agreementpage/{id}', [PrintlayoutController::class, 'arrangement'])->name('arrangement');
+    Route::delete('/setting/agreementpage/{id}', [CompanyController::class, 'deleteAgreementPage'])->name('deleteAgreementPage');
 
     Route::get('/managecompany', [CompanyController::class, 'companylist'])->name('companylist');
     Route::get('/viewcompanydetails/{id}', [CompanyController::class, 'viewCompany'])->name('viewCompany');

@@ -850,4 +850,39 @@ class CompanyController extends Controller
     {
         return view('frontend.myaccount');
     }
+
+    public function deleteAgreementPage($id, Request $request)
+    {
+        // Agreements are stored in Agreement model, not Printlayout. Ensure company ownership.
+        $query = Agreement::where('id', $id);
+        if (Auth::check()) {
+            $query->where('companyid', Auth::user()->company_id);
+        }
+
+        $agreement = $query->first();
+
+        if (!$agreement) {
+            return $this->respondAfterAgreementDelete(false, 'Agreement page not found or inaccessible.', 404);
+        }
+
+        // Attempt to remove underlying file if it exists
+        if (!empty($agreement->agreement_image)) {
+            $filePath = public_path($agreement->agreement_image);
+            if (is_file($filePath)) {
+                @unlink($filePath); // Suppress errors; failure shouldn't block deletion
+            }
+        }
+
+        $agreement->delete();
+        return $this->respondAfterAgreementDelete(true, 'Agreement page deleted successfully.');
+    }
+
+    private function respondAfterAgreementDelete(bool $success, string $message, int $statusCode = 200)
+    {
+        $payload = ['success' => $success, 'message' => $message];
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json($payload, $statusCode);
+        }
+        return redirect()->back()->with($success ? 'success' : 'error', $message);
+    }
 }
