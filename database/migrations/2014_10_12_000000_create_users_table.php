@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('usertype');
+            $table->enum('usertype', ['admin','manager','user'])->default('user');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->bigInteger('company_id');
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

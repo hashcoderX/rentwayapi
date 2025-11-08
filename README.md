@@ -7,6 +7,63 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Rentway API (v1)
+
+This repository has been extended with a mobile-friendly, token-based REST API under the `routes/api.php` file. All endpoints are versioned (`/api/v1/...`) and return a standardized JSON envelope:
+
+```json
+{
+	"success": true,
+	"message": "Vehicle list",
+	"data": { }
+}
+```
+
+### Implemented Endpoints
+
+Public:
+- `POST /api/v1/auth/login` – issue Sanctum token
+- `POST /api/v1/auth/register` – create user + token
+- `GET  /api/v1/vehicles` – list vehicles
+- `GET  /api/v1/vehicle/{id}` – vehicle details
+- `GET  /api/v1/services?category=ambulance|breakdown|schooltransport|stafftransport` – list filtered service ads
+
+Protected (Bearer / Sanctum):
+- `POST /api/v1/vehicles` (create)
+- `PUT /api/v1/vehicles/{id}` (update)
+- `DELETE /api/v1/vehicles/{id}` (delete)
+- `GET /api/v1/bookings` / `POST /api/v1/bookings` / `GET|PUT|DELETE /api/v1/bookings/{id}`
+- `GET|POST|PUT|DELETE /api/v1/advertisers` (Company model)
+- `GET /api/v1/blacklist` / `POST /api/v1/blacklist`
+- `POST /api/v1/services/request` (placeholder service request action)
+
+### Authentication
+Uses Laravel Sanctum. After login/register, store the returned `token` and send it as:
+
+```
+Authorization: Bearer <token>
+```
+
+### Resources & Validation
+Form Request classes live in `app/Http/Requests/Api/V1/*`. Eloquent API Resources (e.g. `VehicleResource`) under `app/Http/Resources/V1` shape responses and embed related data (company + latest image).
+
+### OpenAPI Stub
+See `docs/openapi.yaml` for a starter specification you can enhance (add schemas, error payloads, examples).
+
+### Testing
+Initial feature tests in `tests/Feature` (e.g. `ApiVehicleTest.php`, `ApiAuthTest.php`). Extend with authenticated scenarios as needed.
+
+### Error Format
+All errors conform to the same envelope with `success:false` and a descriptive `message`.
+
+### Next Steps
+1. Expand Booking logic (pricing, overlap checks) inside API layer.
+2. Add relationships for customers & images collections.
+3. Introduce pagination metadata consistently (already stubbed).
+4. Flesh out service request workflow (persist requests).
+5. Add comprehensive Feature tests for protected CRUD flows.
+
+---
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

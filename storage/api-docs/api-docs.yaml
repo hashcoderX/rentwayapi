@@ -1,0 +1,1253 @@
+openapi: 3.0.0
+info:
+  title: 'Rentway API'
+  description: 'Mobile-friendly REST API v1. Secured endpoints require a Bearer token obtained via /api/v1/auth/login. API Owner: Sudharma HewaVitharana.'
+  version: 1.0.0
+servers:
+  -
+    url: /api
+    description: 'API base path'
+paths:
+  /v1/ads:
+    get:
+      tags:
+        - Ads
+      summary: 'List ads'
+      operationId: 9b15c4b7a7b6fd8d42d406fc790eaa46
+      parameters:
+        -
+          name: company_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Ads
+      summary: 'Create ad'
+      operationId: 9a15268410d57e0bd72b4deb6f520a56
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  '/v1/ads/{id}':
+    get:
+      tags:
+        - Ads
+      summary: 'Show ad'
+      operationId: 6c738b9e04df04c37db844adbc36e9e7
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    put:
+      tags:
+        - Ads
+      summary: 'Update ad'
+      operationId: b0f18b25b859468c9b7e3a092deff3fe
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Updated
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Ads
+      summary: 'Delete ad'
+      operationId: 71f7998c0cda61119b940c108bccf865
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+      security:
+        -
+          bearerAuth: []
+  /v1/advertisers:
+    get:
+      tags:
+        - Advertisers
+      summary: 'List advertisers'
+      operationId: 2a34e37ccadc4a519e132d81bdb51037
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Advertisers
+      summary: 'Create advertiser'
+      operationId: 43e4bdb63ed66906a250cd371b552180
+      responses:
+        201:
+          description: Created
+        422:
+          description: 'Validation error'
+      security:
+        -
+          bearerAuth: []
+  '/v1/advertisers/{id}':
+    get:
+      tags:
+        - Advertisers
+      summary: 'Show advertiser'
+      operationId: 935fac05797c0c0aa9eaa67b0e8e3411
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    put:
+      tags:
+        - Advertisers
+      summary: 'Update advertiser'
+      operationId: 38f4f511ce29d1d6751823bb4febbe43
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Updated
+        422:
+          description: 'Validation error'
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Advertisers
+      summary: 'Delete advertiser'
+      operationId: 6ae72fc93fbc6eec881cb7aa3c3879f7
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+      security:
+        -
+          bearerAuth: []
+  /v1/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register
+      description: 'Register a new user.'
+      operationId: 58fb87dce972174198f99707c002431d
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: 'Jane Doe'
+                email:
+                  type: string
+                  example: jane@example.com
+                password:
+                  type: string
+                  example: secret123
+                usertype:
+                  type: string
+                  example: customer
+              type: object
+      responses:
+        201:
+          description: Registered
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Registered
+                  data:
+                    properties:
+                      token:
+                        type: string
+                      user:
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: 'Jane Doe'
+                          email:
+                            type: string
+                            example: jane@example.com
+                        type: object
+                    type: object
+                type: object
+  /v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      description: 'Login with credentials.'
+      operationId: 3ff5fdf1e87b064055e72ef143ecc7c5
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: jane@example.com
+                password:
+                  type: string
+                  example: secret123
+              type: object
+      responses:
+        200:
+          description: 'Logged in'
+        401:
+          description: 'Invalid credentials'
+  /v1/auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout
+      description: 'Logout current user (invalidate tokens).'
+      operationId: 5df06d8bf07ab28923f168580a1b2323
+      responses:
+        200:
+          description: 'Logged out'
+      security:
+        -
+          bearerAuth: []
+  /v1/auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Me
+      description: 'Get authenticated user.'
+      operationId: 43b10aadfac909e8840e7bd830e76590
+      responses:
+        200:
+          description: 'User data'
+      security:
+        -
+          bearerAuth: []
+  /v1/blacklist:
+    get:
+      tags:
+        - Blacklist
+      summary: 'List blacklist entries'
+      operationId: e42082f85175d7c73ad22ac9ae03784c
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Blacklist
+      summary: 'Add to blacklist'
+      operationId: 58136b72c283c62c938077f1e764fd37
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  /v1/bookings:
+    get:
+      tags:
+        - Bookings
+      summary: 'List bookings'
+      operationId: ca12e8815a280768884bf79d2e6271fa
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Bookings
+      summary: 'Create booking'
+      operationId: 5e69811bc39dcd3ea538f8ac9bfe1424
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  '/v1/bookings/{id}':
+    get:
+      tags:
+        - Bookings
+      summary: 'Show booking'
+      operationId: a527c9006802647309508bd85fd41b60
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    put:
+      tags:
+        - Bookings
+      summary: 'Update booking'
+      operationId: f3516d9a6c3f099f68c89adad5dc9834
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Updated
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Bookings
+      summary: 'Delete booking'
+      operationId: 3d0275a58bd1b80be2c7b5bf6f41b165
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+      security:
+        -
+          bearerAuth: []
+  /v1/companies:
+    get:
+      tags:
+        - Companies
+      summary: 'List companies'
+      operationId: 293a3a343a09fe7fe6ef0aafa47a8019
+      parameters:
+        -
+          name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Companies
+      summary: 'Create company'
+      operationId: a094b7019d3e2d55ec5c94d5aaac1faa
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  '/v1/companies/{id}':
+    get:
+      tags:
+        - Companies
+      summary: 'Show company'
+      operationId: d1a38487b469efd7543694c141538d14
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    put:
+      tags:
+        - Companies
+      summary: 'Update company'
+      operationId: 938eb134f73c5e96783aa1bb635f54bd
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Updated
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Companies
+      summary: 'Delete company'
+      operationId: 737e26cf0356527ab519e2e79d169343
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+      security:
+        -
+          bearerAuth: []
+  /v1/customers:
+    get:
+      tags:
+        - Customers
+      summary: 'List customers'
+      operationId: 4a3746e03167dfa8c042bb98d8fa7e96
+      parameters:
+        -
+          name: company_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Customers
+      summary: 'Create customer'
+      operationId: c70020ac938d785dd45e6a0fa99531cc
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  '/v1/customers/{id}':
+    get:
+      tags:
+        - Customers
+      summary: 'Show customer'
+      operationId: 21db656a1d5797e0db53086108f02a7a
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    put:
+      tags:
+        - Customers
+      summary: 'Update customer'
+      operationId: c9cf3453df0c38c38a62391266e3e658
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Updated
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Customers
+      summary: 'Delete customer'
+      operationId: 1705118232d7395da613351db3c6697c
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+      security:
+        -
+          bearerAuth: []
+  /v1/expenses:
+    get:
+      tags:
+        - Expenses
+      summary: 'List expenses'
+      operationId: e72f19fed0591b9616f150c948c156e4
+      parameters:
+        -
+          name: company_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: expenses_type
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Expenses
+      summary: 'Create expense'
+      operationId: 0259d9961921405af70ce1f6b76c288e
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  '/v1/expenses/{id}':
+    get:
+      tags:
+        - Expenses
+      summary: 'Show expense'
+      operationId: aafd70e4a772c7caa1948018d90d121a
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    put:
+      tags:
+        - Expenses
+      summary: 'Update expense'
+      operationId: 27d77d3386ce32e0c69987440c316d85
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Updated
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Expenses
+      summary: 'Delete expense'
+      operationId: 4caa19ba86d6792735a9431592cef7c3
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+      security:
+        -
+          bearerAuth: []
+  /v1/invoices:
+    get:
+      tags:
+        - Invoices
+      summary: 'List invoices'
+      operationId: 1640e2df2c8c25690fabfa827fe64d50
+      parameters:
+        -
+          name: company_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: invoice_status
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: customer_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Invoices
+      summary: 'Create invoice'
+      operationId: 45849a810ca4e57e72044ec023de2deb
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  '/v1/invoices/{id}':
+    get:
+      tags:
+        - Invoices
+      summary: 'Show invoice'
+      operationId: 9f2522103fb3b115721dc943988f2c3b
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+  /v1/notifications:
+    get:
+      tags:
+        - Notifications
+      summary: 'List notifications'
+      operationId: 9e3dfdc4faf54aa01f2e07fda5374455
+      parameters:
+        -
+          name: company_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: read_state
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+  '/v1/notifications/{id}':
+    get:
+      tags:
+        - Notifications
+      summary: 'Show notification'
+      operationId: 9043744c2caba58e1e8cc72bdedf9e0e
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Notifications
+      summary: 'Delete notification'
+      operationId: 3214f17d13ba232374a55aa5b0d077e6
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+      security:
+        -
+          bearerAuth: []
+  /v1/payments:
+    get:
+      tags:
+        - Payments
+      summary: 'List payments'
+      operationId: 85f1f4a8208d1ed8492d8dad6a5d80c7
+      parameters:
+        -
+          name: company_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: payment_type
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: month
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    post:
+      tags:
+        - Payments
+      summary: 'Create payment'
+      operationId: de8f44c3197c0432d223d7940929164a
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  '/v1/payments/{id}':
+    get:
+      tags:
+        - Payments
+      summary: 'Show payment'
+      operationId: c59bf483207e7b9f87cb5197a9632a10
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Payments
+      summary: 'Delete payment'
+      operationId: b932e48c715f4c5d5b05d17bfdbeeacb
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+      security:
+        -
+          bearerAuth: []
+  /v1/reports/summary:
+    get:
+      tags:
+        - Reports
+      summary: 'Financial summary'
+      operationId: a30b97bc29e5351198a39377f199bd68
+      parameters:
+        -
+          name: company_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        -
+          name: month
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: year
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+      security:
+        -
+          bearerAuth: []
+  /v1/services:
+    get:
+      tags:
+        - Services
+      summary: 'List services (ads categorized)'
+      operationId: 67cbbb0f9c56d57d64701620f46d07d6
+      parameters:
+        -
+          name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        -
+          name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+  /v1/services/request:
+    post:
+      tags:
+        - Services
+      summary: 'Request a service'
+      operationId: 61d10b6e771bf398378a40e3f8422d18
+      responses:
+        200:
+          description: Accepted
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        422:
+          $ref: '#/components/responses/ValidationError'
+      security:
+        -
+          bearerAuth: []
+  /v1/vehicles:
+    get:
+      tags:
+        - Vehicles
+      summary: 'List vehicles'
+      operationId: eb6e2c396cab1218870893536e8325b4
+      responses:
+        200:
+          description: OK
+    post:
+      tags:
+        - Vehicles
+      summary: 'Create vehicle'
+      operationId: 679667a7bea11c54470817ecd9d32761
+      responses:
+        201:
+          description: Created
+      security:
+        -
+          bearerAuth: []
+  '/v1/vehicle/{id}':
+    get:
+      tags:
+        - Vehicles
+      summary: 'Show vehicle'
+      operationId: bd1ffda92f66c586b7d9ef40feafa0f2
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+  '/v1/vehicles/{id}':
+    put:
+      tags:
+        - Vehicles
+      summary: 'Update vehicle'
+      operationId: ac3001b3499ed25b7cb09a1f57bd6125
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Updated
+      security:
+        -
+          bearerAuth: []
+    delete:
+      tags:
+        - Vehicles
+      summary: 'Delete vehicle'
+      operationId: 2abc417e7b23df1cc31a6b970327f963
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Deleted
+      security:
+        -
+          bearerAuth: []
+components:
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Unauthorized
+            type: object
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Forbidden
+            type: object
+    ValidationError:
+      description: 'Validation failed'
+      content:
+        application/json:
+          schema:
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 'Validation failed'
+              errors:
+                type: object
+            type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      bearerFormat: JWT
+      scheme: bearer
+tags:
+  -
+    name: Ads
+    description: 'Advertisements management'
+  -
+    name: Advertisers
+    description: 'Advertisers (companies) management'
+  -
+    name: Auth
+    description: 'Authentication endpoints'
+  -
+    name: Blacklist
+    description: 'Blacklist management'
+  -
+    name: Bookings
+    description: 'Bookings management'
+  -
+    name: Companies
+    description: 'Companies management'
+  -
+    name: Customers
+    description: 'Customers management'
+  -
+    name: Expenses
+    description: 'Expenses management'
+  -
+    name: Invoices
+    description: 'Invoices management'
+  -
+    name: Notifications
+    description: 'Notifications management'
+  -
+    name: Payments
+    description: 'Payments management'
+  -
+    name: Reports
+    description: 'Reporting endpoints'
+  -
+    name: Services
+    description: 'Service catalog & requests'
+  -
+    name: Vehicles
+    description: 'Vehicle catalog management'
