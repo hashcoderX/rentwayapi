@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('usertype', ['admin','manager','user'])->default('user');
+            // Expanded to include values referenced by AuthRegisterRequest validation (customer, advertiser)
+            $table->enum('usertype', ['admin','manager','user','customer','advertiser'])->default('user');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->unsignedBigInteger('company_id')->nullable();
